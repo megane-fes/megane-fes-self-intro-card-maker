@@ -17,12 +17,12 @@
 <div class="row"><div class="group"><label>アイコン画像</label><input id="iconFile" type="file" accept="image/*"></div></div>
 <label>好きな作品ベスト3</label><div id="works"></div>
 <label>最愛キャラ</label><input id="favorite" type="text" placeholder="アトラス作品で好きなキャラ">
-<label>最愛キャラ画像</label><input id="favFile" type="file" accept="image/*"><p class="small">最終表示サイズは約 760×190px です。画像はカード上で半透明（50%程度）で表示されます。</p>
+<label>最愛キャラ画像</label><input id="favFile" type="file" accept="image/*"><button class="btn" type="button" id="clearFavImage">最愛キャラ画像を削除</button><p class="small">最終表示サイズは約 760×190px です。画像はカード上で半透明（50%程度）で表示されます。</p>
 <label>同担</label><div class="checks" id="sameFan"></div><textarea id="sameFanText" placeholder="同担についての補足など"></textarea>
 <label>男女CP</label><div class="checks" id="hetCp"></div><textarea id="hetText" placeholder="推しカプ、補足など"></textarea>
 <label>BL/GLCP</label><div class="checks" id="blglCp"></div><textarea id="blglText" placeholder="推しカプ、補足など"></textarea>
 <label>フリースペース</label><textarea id="freeText" placeholder="自由に書いてください"></textarea>
-<label>フリースペース画像</label><input id="freeFile" type="file" accept="image/*">
+<label>フリースペース画像</label><input id="freeFile" type="file" accept="image/*"><button class="btn" type="button" id="clearFreeImage">フリースペース画像を削除</button>
 <div><button class="btn primary" id="savePng">PNG保存</button><button class="btn" id="openPng">画像を新規表示</button><button class="btn" id="saveJson">JSON保存</button><label class="btn" style="display:inline-block;cursor:pointer">JSON読込<input id="loadJson" type="file" accept="application/json" style="display:none"></label><button class="btn" id="clearAll">入力をクリア</button></div>
 <a id="downloadLink" download="megane-fes-card.png" style="display:none">PNG</a><p class="small">背景テンプレート作成：<a href="https://x.com/ayattuji" target="_blank" rel="noopener">@綾辻.jp</a> さん（Xアカウント: @ayattuji）。素敵なテンプレートをありがとうございます。</p>
 </section>
@@ -42,6 +42,8 @@ for(let i=0;i<3;i++)$('works').insertAdjacentHTML('beforeend',`<div class="group
 for(let i=0;i<3;i++){$(`work${i}`).addEventListener('input',e=>{state.works[i]=e.target.value;persist();draw()});$(`reason${i}`).addEventListener('input',e=>{state.reasons[i]=e.target.value;persist();draw()})}
 function loadImg(file,cb){if(!file)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>cb({data:r.result,img:im});im.src=r.result};r.readAsDataURL(file)}
 $('iconFile').onchange=e=>loadImg(e.target.files[0],v=>{state.icon=v;persist();draw()});$('favFile').onchange=e=>loadImg(e.target.files[0],v=>{state.fav=v;persist();draw()});$('freeFile').onchange=e=>loadImg(e.target.files[0],v=>{state.free=v;persist();draw()});
+function clearImageField(key,inputId){state[key]=null;$(inputId).value='';persist();draw()}
+$('clearFavImage').onclick=()=>clearImageField('fav','favFile');$('clearFreeImage').onclick=()=>clearImageField('free','freeFile');
 function persist(){localStorage.setItem('meganeFesCardOverlayV5',JSON.stringify({...state,icon:state.icon?.data||null,fav:state.fav?.data||null,free:state.free?.data||null}))}
 function restore(){const raw=localStorage.getItem('meganeFesCardOverlayV5');if(!raw)return;try{Object.assign(state,JSON.parse(raw));['icon','fav','free'].forEach(k=>{if(typeof state[k]==='string'&&state[k]){const im=new Image();im.onload=draw;im.src=state[k];state[k]={data:state[k],img:im}}});syncForm()}catch(e){}}
 function syncForm(){['name','handle','favorite','sameFanText','hetText','blglText','freeText'].forEach(id=>$(id).value=state[id]||'');for(let i=0;i<3;i++){$(`work${i}`).value=state.works[i]||'';$(`reason${i}`).value=state.reasons[i]||''}document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(input=>{const v=state[input.name];input.checked=Array.isArray(v)?v.includes(input.value):v===input.value})}
