@@ -2,7 +2,7 @@
 眼鏡祭用自己紹介カードメーカー👓
 
 ## URL
-https://megane-fes.github.io/atlus-self-introduction-card-maker/
+https://megane-fes.github.io/megane-fes-self-intro-card-maker/
 
 ## 仕様
 Xの「#アトラス自己紹介シート」でおなじみ、 [@綾辻.jp](https://x.com/ayattuji)さんのテンプレに各種テキストなんかをオーバレイしています。
